@@ -4,7 +4,7 @@ var svgHeight = 400;
 var margin = {
   top: 10,
   right: 50,
-  bottom: 40,
+  bottom: 80,
   left: 60
 };
 var chartWidth = svgWidth - margin.left - margin.right;
@@ -16,7 +16,8 @@ var svg = d3.select("#scatter").append("svg")
       .attr("width", svgWidth);
 
 var chartGroup = svg.append("g")
-      .attr("transform", `translate(${margin.left}, ${margin.top})`);
+      .attr("transform", `translate(${margin.left}, ${margin.top})`)
+      .attr("class","insideChart");
 
 d3.csv("./assets/data/data.csv",function(data){
     data.forEach(function(d){
@@ -27,11 +28,11 @@ d3.csv("./assets/data/data.csv",function(data){
 
     // create scales
     var xLinearScale = d3.scaleLinear()
-      .domain([d3.min(data, d => d.poverty),d3.max(data, d => d.poverty)])
+      .domain([d3.min(data, d => d.poverty)-0.5,d3.max(data, d => d.poverty)+0.5])
       .range([0,chartWidth-10]);
 
     var yLinearScale = d3.scaleLinear()
-      .domain([0, d3.max(data, d => d.healthcare)])
+      .domain([0, d3.max(data, d => d.healthcare)+4])
       .range([chartHeight, 0]);
 
     // create axes
@@ -47,7 +48,7 @@ d3.csv("./assets/data/data.csv",function(data){
     svg.append("text")             
     .attr("transform",
           "translate(" + (chartWidth/2) + " ," + 
-                        (chartHeight + margin.top + 30) + ")")
+                        (chartHeight + margin.top + 50) + ")")
     .text(`Poverty(%)`);
     
     // append y axes
@@ -69,7 +70,7 @@ d3.csv("./assets/data/data.csv",function(data){
     // append line
     chartGroup.append("path")
       .data([data])
-      // .attr("d", line)
+      .attr("d", line)
       .attr("fill", "none");
 
     // append circles
@@ -84,18 +85,18 @@ d3.csv("./assets/data/data.csv",function(data){
       .attr("stroke-width", "1")
       .attr("stroke", "black")
 
+
     //append text in circles
-    chartGroup.selectAll("text")
+    var abbrGroup = chartGroup.selectAll("insideChart")
       .data(data)
       .enter()
       .append("text")
-      .text(d=>d.abbr)
-      .attr("x", d => xLinearScale(d.poverty-0.1))
-      .attr("y", d => yLinearScale(d.healthcare-0.1))
+      .text(d => d.abbr)
+      .attr("x", d => xLinearScale(d.poverty-0.11))
+      .attr("y", d => yLinearScale(d.healthcare-0.17))
       .attr("font_family", "sans-serif")  // Font type
       .attr("font-size", "8px")  // Font size
-      .attr("fill", "white")   // Font color
+      .attr("fill", "black")   // Font color
       .attr("font-weight","bold")
-    
 });
 
